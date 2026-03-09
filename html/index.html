@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dybdev-hud</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Google Fonts: Rajdhani for Arc Raiders look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ======================================
+     PLAYER INFO PANEL (bottom-left)
+     ====================================== -->
+<div id="player-info" class="hud-panel">
+  <div class="panel-corner tl"></div>
+  <div class="panel-corner tr"></div>
+  <div class="panel-corner bl"></div>
+  <div class="panel-corner br"></div>
+
+  <div class="player-identity">
+    <div class="player-name" id="player-name">OPERATOR</div>
+    <div class="player-sub">
+      <span class="player-id" id="player-id">#000000</span>
+      <span class="player-job" id="player-job">CIVILIAN</span>
+    </div>
+  </div>
+
+  <!-- Status bars -->
+  <div id="status-bars" class="status-bars">
+    <!-- Health -->
+    <div class="stat-row" id="bar-health" data-element="health">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+      <div class="stat-label">HP</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar health-bar" id="health-bar" style="width:100%"></div>
+      </div>
+      <div class="stat-value" id="health-val">100</div>
+    </div>
+    <!-- Armor -->
+    <div class="stat-row" id="bar-armor" data-element="armor">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M12 1l-12 5v6c0 5.523 5.1 10.74 12 13 6.9-2.26 12-7.477 12-13v-6l-12-5z"/></svg>
+      <div class="stat-label">ARM</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar armor-bar" id="armor-bar" style="width:0%"></div>
+      </div>
+      <div class="stat-value" id="armor-val">0</div>
+    </div>
+    <!-- Stamina -->
+    <div class="stat-row" id="bar-stamina" data-element="stamina">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L7 13.3V18h2v-3.7l.8-.4"/></svg>
+      <div class="stat-label">STA</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar stamina-bar" id="stamina-bar" style="width:100%"></div>
+      </div>
+      <div class="stat-value" id="stamina-val">100</div>
+    </div>
+    <!-- Hunger -->
+    <div class="stat-row" id="bar-hunger" data-element="hunger">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1.97v4.05h-4.97l.3 2.34c1.71.47 3.31 1.32 4.27 2.26 1.44 1.42 2.43 2.89 2.43 5.29v8.05zM1 21.99V21h15.03v.99c0 .55-.45 1-1.01 1H2.01c-.56 0-1.01-.45-1.01-1zm15.03-7c0-8-15.03-8-15.03 0h15.03zM1.02 17h15v2H1z"/></svg>
+      <div class="stat-label">HNG</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar hunger-bar" id="hunger-bar" style="width:100%"></div>
+      </div>
+      <div class="stat-value" id="hunger-val">100</div>
+    </div>
+    <!-- Thirst -->
+    <div class="stat-row" id="bar-thirst" data-element="thirst">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8z"/></svg>
+      <div class="stat-label">THR</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar thirst-bar" id="thirst-bar" style="width:100%"></div>
+      </div>
+      <div class="stat-value" id="thirst-val">100</div>
+    </div>
+    <!-- Stress -->
+    <div class="stat-row" id="bar-stress" data-element="stress">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+      <div class="stat-label">STR</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar stress-bar" id="stress-bar" style="width:0%"></div>
+      </div>
+      <div class="stat-value" id="stress-val">0</div>
+    </div>
+    <!-- Oxygen -->
+    <div class="stat-row hidden" id="bar-oxygen" data-element="oxygen">
+      <svg class="stat-icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm.5-7v-3.25a.5.5 0 0 0-1 0V12H8.75a.5.5 0 0 0 0 1H11.5v2.25a.5.5 0 0 0 1 0V13h2.75a.5.5 0 0 0 0-1H12.5z"/></svg>
+      <div class="stat-label">O2</div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar oxygen-bar" id="oxygen-bar" style="width:100%"></div>
+      </div>
+      <div class="stat-value" id="oxygen-val">100</div>
+    </div>
+  </div>
+
+  <!-- Money row -->
+  <div class="money-row" id="money-row">
+    <span class="money-item" id="cash-display">
+      <svg viewBox="0 0 24 24" class="money-icon"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      $<span id="cash-val">0</span>
+    </span>
+    <span class="money-sep">|</span>
+    <span class="money-item" id="bank-display">
+      <svg viewBox="0 0 24 24" class="money-icon"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg>
+      $<span id="bank-val">0</span>
+    </span>
+  </div>
+</div>
+
+<!-- ======================================
+     VOICE INDICATOR
+     ====================================== -->
+<div id="voice-indicator" class="voice-panel" data-element="voice">
+  <div class="voice-icon">
+    <svg id="voice-icon-svg" viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+  </div>
+  <div class="voice-range" id="voice-range">1</div>
+</div>
+
+<!-- ======================================
+     COMPASS / LOCATION BAR (top-center)
+     ====================================== -->
+<div id="compass-container" class="compass-panel" data-element="compass">
+  <div class="compass-track">
+    <canvas id="compass-canvas" width="400" height="36"></canvas>
+  </div>
+  <div class="compass-center-mark"></div>
+  <div class="compass-info">
+    <span class="compass-heading" id="compass-heading">0°</span>
+    <span class="compass-cardinal" id="compass-cardinal">N</span>
+  </div>
+  <div class="location-row">
+    <span class="street-name" id="street-name">Unknown Street</span>
+    <span class="area-name" id="area-name">Los Santos</span>
+  </div>
+</div>
+
+<!-- ======================================
+     VEHICLE HUD (bottom-right)
+     ====================================== -->
+<div id="vehicle-hud" class="hud-panel vehicle-panel hidden">
+  <div class="panel-corner tl"></div>
+  <div class="panel-corner tr"></div>
+  <div class="panel-corner bl"></div>
+  <div class="panel-corner br"></div>
+
+  <!-- Speedometer -->
+  <div class="speedo-wrap">
+    <div class="speedo-arc-container">
+      <svg id="speedo-arc" viewBox="0 0 200 120" class="speedo-arc-svg">
+        <!-- Background arc -->
+        <path d="M 20 110 A 90 90 0 0 1 180 110" fill="none" stroke="rgba(0,212,255,0.1)" stroke-width="8" stroke-linecap="round"/>
+        <!-- Active arc -->
+        <path id="speedo-arc-active" d="M 20 110 A 90 90 0 0 1 180 110" fill="none" stroke="#00d4ff" stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="0 283" style="transition: stroke-dasharray 0.15s ease"/>
+        <!-- Tick marks -->
+        <g id="speedo-ticks" stroke="rgba(0,212,255,0.4)" stroke-width="1.5"></g>
+      </svg>
+      <div class="speedo-value-wrap">
+        <div class="speedo-speed" id="speedo-speed">0</div>
+        <div class="speedo-unit" id="speedo-unit">MPH</div>
+      </div>
+    </div>
+
+    <!-- Gear & RPM -->
+    <div class="speedo-side-info">
+      <div class="gear-display" id="gear-display">1</div>
+      <div class="gear-label">GEAR</div>
+    </div>
+  </div>
+
+  <!-- RPM Bar -->
+  <div class="rpm-bar-row" id="rpm-bar-row">
+    <div class="rpm-label">RPM</div>
+    <div class="rpm-bar-wrap">
+      <div class="rpm-segments" id="rpm-segments"></div>
+    </div>
+  </div>
+
+  <!-- Fuel Bar -->
+  <div class="fuel-row" id="fuel-row">
+    <svg class="fuel-icon" viewBox="0 0 24 24"><path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z"/></svg>
+    <div class="fuel-bar-wrap">
+      <div class="fuel-bar" id="fuel-bar" style="width:100%"></div>
+    </div>
+    <div class="fuel-val" id="fuel-val">100%</div>
+  </div>
+
+  <!-- Indicators row -->
+  <div class="indicators-row">
+    <div class="indicator left-indicator" id="left-indicator" title="Left Turn Signal">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </div>
+    <div class="indicator engine-indicator" id="engine-indicator" title="Engine Health">
+      <svg viewBox="0 0 24 24"><path d="M7 4v2H4v3H2V7H1v10h1v-2h2v3h3v2h2v-2h8v2h2v-2h3v-3h2v2h1V7h-1v2h-2V7h-3V4h-2v3H9V4z"/></svg>
+    </div>
+    <div class="indicator seatbelt-indicator" id="seatbelt-indicator" title="Seatbelt">
+      <svg viewBox="0 0 24 24"><path d="M10.5 15.5c0 1.1.9 2 2 2s2-.9 2-2-.9-2-2-2-2 .9-2 2zM5 3v18h2v-7h4.26c.44 2.28 2.46 4 4.87 4 2.76 0 5-2.24 5-5s-2.24-5-5-5c-1.52 0-2.87.68-3.8 1.75L9.04 3H5zm9.13 7.5c1.59 0 2.87 1.29 2.87 2.87 0 .14-.01.27-.03.4L13.03 11c.32-.31.68-.5 1.1-.5z"/></svg>
+    </div>
+    <div class="indicator right-indicator" id="right-indicator" title="Right Turn Signal">
+      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+    </div>
+  </div>
+
+  <!-- Doors panel -->
+  <div class="doors-row" id="doors-row">
+    <div class="door-item" id="door-fl" title="Front Left"><span>FL</span></div>
+    <div class="door-item" id="door-fr" title="Front Right"><span>FR</span></div>
+    <div class="door-item" id="door-rl" title="Rear Left"><span>RL</span></div>
+    <div class="door-item" id="door-rr" title="Rear Right"><span>RR</span></div>
+    <div class="door-item" id="door-hood" title="Hood"><span>HD</span></div>
+    <div class="door-item" id="door-trunk" title="Trunk"><span>TK</span></div>
+  </div>
+
+  <!-- Vehicle name -->
+  <div class="vehicle-name" id="vehicle-name">VEHICLE</div>
+</div>
+
+<!-- ======================================
+     BOAT EXTRA INFO
+     ====================================== -->
+<div id="boat-hud" class="hud-panel extra-panel hidden">
+  <div class="panel-corner tl"></div><div class="panel-corner br"></div>
+  <div class="extra-title">NAUTICAL</div>
+  <div class="extra-row">
+    <span class="extra-label">HEADING</span>
+    <span class="extra-val" id="boat-heading">000°</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">DEPTH</span>
+    <span class="extra-val" id="boat-depth">0m</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">ANCHOR</span>
+    <span class="extra-val" id="boat-anchor">RELEASED</span>
+  </div>
+</div>
+
+<!-- ======================================
+     AIRCRAFT EXTRA INFO
+     ====================================== -->
+<div id="aircraft-hud" class="hud-panel extra-panel hidden">
+  <div class="panel-corner tl"></div><div class="panel-corner br"></div>
+  <div class="extra-title">AVIONICS</div>
+  <div class="extra-row">
+    <span class="extra-label">ALT</span>
+    <span class="extra-val" id="aircraft-alt">0m</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">V/S</span>
+    <span class="extra-val" id="aircraft-vs">0 fpm</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">HDG</span>
+    <span class="extra-val" id="aircraft-heading">000°</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">GEAR</span>
+    <span class="extra-val" id="aircraft-gear">UP</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">G-FORCE</span>
+    <span class="extra-val" id="aircraft-gforce">1.0G</span>
+  </div>
+  <div class="extra-row">
+    <span class="extra-label">THROTTLE</span>
+    <div class="throttle-bar-wrap">
+      <div class="throttle-bar" id="throttle-bar" style="height:0%"></div>
+    </div>
+    <span class="extra-val" id="aircraft-throttle">0%</span>
+  </div>
+</div>
+
+<!-- ======================================
+     BICYCLE HUD
+     ====================================== -->
+<div id="bicycle-hud" class="hud-panel vehicle-panel hidden">
+  <div class="panel-corner tl"></div><div class="panel-corner br"></div>
+  <div class="bicycle-speed-wrap">
+    <div class="bicycle-speed" id="bicycle-speed">0</div>
+    <div class="bicycle-unit" id="bicycle-unit">MPH</div>
+  </div>
+  <div class="bicycle-rows">
+    <div class="bicycle-row">
+      <span class="bicycle-label">CADENCE</span>
+      <span class="bicycle-val" id="bicycle-cadence">0 RPM</span>
+    </div>
+    <div class="bicycle-row">
+      <span class="bicycle-label">STAMINA</span>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar stamina-bar" id="bicycle-stamina-bar" style="width:100%"></div>
+      </div>
+    </div>
+    <div class="bicycle-row">
+      <span class="bicycle-label">DISTANCE</span>
+      <span class="bicycle-val" id="bicycle-distance">0.00 km</span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================
+     TRAIN HUD
+     ====================================== -->
+<div id="train-hud" class="hud-panel vehicle-panel hidden">
+  <div class="panel-corner tl"></div><div class="panel-corner br"></div>
+  <div class="train-speed-row">
+    <div class="train-speed" id="train-speed">0</div>
+    <div class="train-unit" id="train-unit">MPH</div>
+    <div class="train-direction" id="train-direction">FWD</div>
+  </div>
+  <div class="train-signal-row">
+    <div class="signal-light" id="signal-green"></div>
+    <div class="signal-light" id="signal-yellow"></div>
+    <div class="signal-light" id="signal-red"></div>
+    <div class="signal-label" id="signal-label">CLEAR</div>
+  </div>
+  <div class="train-station-row">
+    <span class="train-station-label">NEXT STATION</span>
+    <span class="train-station-val" id="train-next-station">—</span>
+  </div>
+  <div class="train-station-row" id="train-at-station-row" style="display:none">
+    <span class="train-station-label">AT STATION</span>
+    <span class="train-station-val accent" id="train-cur-station">—</span>
+  </div>
+  <div class="train-pax-row">
+    <span class="train-station-label">PASSENGERS</span>
+    <span class="train-station-val" id="train-passengers">0</span>
+  </div>
+</div>
+
+<!-- ======================================
+     WANTED LEVEL INDICATOR
+     ====================================== -->
+<div id="wanted-panel" class="wanted-panel hidden">
+  <div class="wanted-stars" id="wanted-stars">
+    <span class="star" data-level="1">★</span>
+    <span class="star" data-level="2">★</span>
+    <span class="star" data-level="3">★</span>
+    <span class="star" data-level="4">★</span>
+    <span class="star" data-level="5">★</span>
+  </div>
+</div>
+
+<!-- ======================================
+     VEHICLE CONTROL PANEL
+     ====================================== -->
+<div id="control-panel" class="control-panel hidden">
+  <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
+  <div class="panel-corner bl"></div><div class="panel-corner br"></div>
+  <div class="cp-title">
+    <svg viewBox="0 0 24 24"><path d="M7 4v2H4v3H2V7H1v10h1v-2h2v3h3v2h2v-2h8v2h2v-2h3v-3h2v2h1V7h-1v2h-2V7h-3V4h-2v3H9V4z"/></svg>
+    CONTROL PANEL
+  </div>
+  <div class="cp-grid">
+    <button class="cp-btn" id="cp-engine" data-action="engine" data-state="true">
+      <svg viewBox="0 0 24 24"><path d="M7 4v2H4v3H2V7H1v10h1v-2h2v3h3v2h2v-2h8v2h2v-2h3v-3h2v2h1V7h-1v2h-2V7h-3V4h-2v3H9V4z"/></svg>
+      ENGINE
+    </button>
+    <button class="cp-btn" id="cp-lights" data-action="lights" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+      LIGHTS
+    </button>
+    <button class="cp-btn" id="cp-hazard" data-action="hazard" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>
+      HAZARD
+    </button>
+    <button class="cp-btn" id="cp-lock" data-action="lockDoor" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
+      LOCK
+    </button>
+    <button class="cp-btn" id="cp-hood" data-action="openHood" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M20 8H4l-2 6v2h2v4h4v-4h8v4h4v-4h2v-2l-2-6zm-14.5 6c-.83 0-1.5-.67-1.5-1.5S4.67 11 5.5 11s1.5.67 1.5 1.5S6.33 14 5.5 14zm13 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      HOOD
+    </button>
+    <button class="cp-btn" id="cp-trunk" data-action="openTrunk" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M20 8H4l-2 6v2h2v4h4v-4h8v4h4v-4h2v-2l-2-6z"/></svg>
+      TRUNK
+    </button>
+    <button class="cp-btn" id="cp-left-signal" data-action="leftIndicator" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      LEFT
+    </button>
+    <button class="cp-btn" id="cp-right-signal" data-action="rightIndicator" data-state="false">
+      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      RIGHT
+    </button>
+  </div>
+  <button class="cp-close" id="cp-close">✕ CLOSE</button>
+</div>
+
+<!-- Control Panel Toggle Button -->
+<button id="cp-toggle" class="cp-toggle-btn hidden" title="Vehicle Control Panel">
+  <svg viewBox="0 0 24 24"><path d="M7 4v2H4v3H2V7H1v10h1v-2h2v3h3v2h2v-2h8v2h2v-2h3v-3h2v2h1V7h-1v2h-2V7h-3V4h-2v3H9V4z"/></svg>
+</button>
+
+<!-- ======================================
+     HUD EDITOR OVERLAY
+     ====================================== -->
+<div id="hud-editor" class="editor-overlay hidden">
+  <div class="editor-sidebar">
+    <div class="editor-title">
+      <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      HUD EDITOR
+    </div>
+
+    <div class="editor-section">
+      <div class="editor-section-title">ELEMENTS</div>
+      <div id="elements-list" class="elements-list"></div>
+    </div>
+
+    <div class="editor-section">
+      <div class="editor-section-title">SPEED UNIT</div>
+      <div class="speed-unit-toggle">
+        <button class="su-btn active" id="su-mph" data-unit="mph">MPH</button>
+        <button class="su-btn" id="su-kmh" data-unit="kmh">KM/H</button>
+      </div>
+    </div>
+
+    <div class="editor-section">
+      <div class="editor-section-title">ACCENT COLOR</div>
+      <div class="color-presets" id="color-presets">
+        <div class="color-preset" data-color="#00d4ff" style="background:#00d4ff" title="Cyan"></div>
+        <div class="color-preset" data-color="#00ffcc" style="background:#00ffcc" title="Teal"></div>
+        <div class="color-preset" data-color="#ff6b35" style="background:#ff6b35" title="Orange"></div>
+        <div class="color-preset" data-color="#ff3366" style="background:#ff3366" title="Red"></div>
+        <div class="color-preset" data-color="#a855f7" style="background:#a855f7" title="Purple"></div>
+        <div class="color-preset" data-color="#22c55e" style="background:#22c55e" title="Green"></div>
+        <div class="color-preset" data-color="#facc15" style="background:#facc15" title="Yellow"></div>
+        <div class="color-preset" data-color="#f8f8f8" style="background:#f8f8f8" title="White"></div>
+      </div>
+      <label class="custom-color-label">Custom:</label>
+      <input type="color" id="custom-color-picker" value="#00d4ff" class="custom-color-picker" />
+    </div>
+
+    <div class="editor-section">
+      <div class="editor-section-title">PREVIEW</div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="preview-toggle" />
+        <span class="toggle-slider"></span>
+        <span class="toggle-label">Show Preview Data</span>
+      </label>
+    </div>
+
+    <div class="editor-actions">
+      <button class="editor-btn save-btn" id="editor-save">
+        <svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+        SAVE
+      </button>
+      <button class="editor-btn reset-btn" id="editor-reset">
+        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+        RESET
+      </button>
+      <button class="editor-btn close-btn" id="editor-close">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        CLOSE
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-canvas" id="editor-canvas">
+    <div class="editor-grid" id="editor-grid"></div>
+    <div class="editor-hint">
+      <svg viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg>
+      Drag HUD elements to reposition them
+    </div>
+  </div>
+</div>
+
+<!-- ======================================
+     NOTIFICATION SYSTEM
+     ====================================== -->
+<div id="notification-container" class="notification-container"></div>
+
+<!-- Scripts -->
+<script src="js/app.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/vehicle.js"></script>
+<script src="js/editor.js"></script>
+</body>
+</html>
