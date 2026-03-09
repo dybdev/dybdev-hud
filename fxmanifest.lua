@@ -39,4 +39,3 @@ files {
     'locales/*.json',
 }
 
-dependency '/player_slots'
