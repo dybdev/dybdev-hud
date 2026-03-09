@@ -1,0 +1,9 @@
+{
+  "seatbelt_on":       "Seatbelt fastened",
+  "seatbelt_off":      "Seatbelt released",
+  "bike_distance_reset": "Cycling distance reset",
+  "hud_visible":       "HUD shown",
+  "hud_hidden":        "HUD hidden",
+  "editor_saved":      "HUD settings saved",
+  "editor_reset":      "HUD settings reset to defaults"
+}
